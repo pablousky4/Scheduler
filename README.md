@@ -1,7 +1,8 @@
 https://github.com/pablousky4/Scheduler
 # Scheduler
 # Proyecto Scheduler
-
+PARA EJECUTAR EL GUI USAMOS
+- python -m src.gui
 ## Descripción
 Simula la planificación de procesos en un sistema operativo usando FCFS y Round-Robin.
 
