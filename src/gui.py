@@ -12,13 +12,12 @@ class SchedulerApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Scheduler GUI")
-        self.geometry("600x400")
+        self.geometry("800x700")
         self.resizable(False, False)
         self.repo = RepositorioProcesos()
         self.setup_ui()
 
     def setup_ui(self):
-        # Estilos
         style = ttk.Style(self)
         style.theme_use('clam')
         style.configure('TButton', padding=6, relief='flat', font=('Arial', 10))
@@ -26,7 +25,6 @@ class SchedulerApp(tk.Tk):
         style.configure('Header.TLabel', font=('Arial', 12, 'bold'))
         style.configure('Treeview', font=('Arial', 10), rowheight=24)
 
-        # Frame procesos
         fr_proc = ttk.Frame(self, padding=10)
         fr_proc.pack(fill='x')
         ttk.Label(fr_proc, text="Procesos", style='Header.TLabel').pack(anchor='w')
@@ -37,7 +35,6 @@ class SchedulerApp(tk.Tk):
             self.tree.column(c, width=100, anchor='center')
         self.tree.pack(fill='x', pady=5)
 
-        # Botones
         fr_btn = ttk.Frame(self, padding=10)
         fr_btn.pack(fill='x')
         ttk.Button(fr_btn, text="Agregar", command=self.add_proceso).pack(side='left', padx=5)
@@ -46,12 +43,15 @@ class SchedulerApp(tk.Tk):
         ttk.Button(fr_btn, text="Guardar JSON", command=self.save_json).pack(side='left', padx=5)
         ttk.Button(fr_btn, text="Cargar JSON", command=self.load_json).pack(side='left', padx=5)
 
-        # Output Gantt y métricas
         fr_out = ttk.Frame(self, padding=10)
         fr_out.pack(fill='both', expand=True)
         ttk.Label(fr_out, text="Salida", style='Header.TLabel').pack(anchor='w')
         self.txt = tk.Text(fr_out, height=8, font=('Consolas',10))
-        self.txt.pack(fill='both', expand=True, pady=5)
+        self.txt.pack(fill='x', pady=5)
+
+        # Canvas para Gantt visual
+        self.canvas = tk.Canvas(fr_out, height=120, bg='white')
+        self.canvas.pack(fill='x', pady=5)
 
     def refresh_tree(self):
         for i in self.tree.get_children(): self.tree.delete(i)
@@ -74,6 +74,7 @@ class SchedulerApp(tk.Tk):
         gantt = FCFSScheduler().planificar(self.repo.listar())
         mets = calcular_metricas(self.repo.listar(), gantt)
         self.display_output(gantt, mets)
+        self.draw_gantt(gantt)
 
     def run_rr(self):
         q = simpledialog.askinteger("Quantum","Quantum (unidades):", parent=self, minvalue=1)
@@ -82,6 +83,7 @@ class SchedulerApp(tk.Tk):
             gantt = RoundRobinScheduler(q).planificar(self.repo.listar())
             mets = calcular_metricas(self.repo.listar(), gantt)
             self.display_output(gantt, mets)
+            self.draw_gantt(gantt)
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
@@ -106,8 +108,22 @@ class SchedulerApp(tk.Tk):
         self.txt.insert(tk.END, f"Diagrama de Gantt: {gantt}\n")
         self.txt.insert(tk.END, f"Métricas: {metrics}\n")
 
+    def draw_gantt(self, gantt):
+        self.canvas.delete("all")
+        scale = 30
+        y = 20
+        height = 30
+        for pid, start, end in gantt:
+            x1 = start * scale + 10
+            x2 = end * scale + 10
+            self.canvas.create_rectangle(x1, y, x2, y+height, fill='skyblue')
+            self.canvas.create_text((x1+x2)//2, y+height//2, text=pid)
+            self.canvas.create_text(x1, y+height+10, text=str(start), anchor='n')
+        if gantt:
+            _, _, end = gantt[-1]
+            self.canvas.create_text(end * scale + 10, y+height+10, text=str(end), anchor='n')
+
 if __name__ == '__main__':
-    # Asegurar carpeta data en proyecto raíz
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     data_dir = os.path.join(root_dir, 'data')
     os.makedirs(data_dir, exist_ok=True)
