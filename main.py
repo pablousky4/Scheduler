@@ -34,13 +34,14 @@ def menu():
             print("Diagrama de Gantt:", gantt)
             print("Métricas:", calcular_metricas(repo.listar(), gantt))
         elif opt == '5':
-            ruta = input("Ruta JSON para guardar: ")
-            repo.guardar_json(ruta)
-            print("Guardado en", ruta)
+            nombre = input("Nombre de fichero para guardar (sin .json): ").strip()
+            repo.guardar_json(nombre)
+            print(f"→ Guardado en data/{nombre}.json")
+
         elif opt == '6':
-            ruta = input("Ruta JSON para cargar: ")
-            repo.cargar_json(ruta)
-            print("Cargado desde", ruta)
+            nombre = input("Nombre de fichero para cargar (sin .json): ").strip()
+            repo.cargar_json(nombre)
+            print(f"→ Cargado desde data/{nombre}.json")
         elif opt == '7':
             print("Saliendo...")
             sys.exit(0)
