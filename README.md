@@ -6,6 +6,7 @@ https://github.com/pablousky4/Scheduler
 Simula la planificación de procesos en un sistema operativo usando FCFS y Round-Robin.
 
 ## Estructura
+- `main.py`: interfaz CLI, ahora en la raíz para invocar el paquete `src`.
 - `src/`: código fuente.
 - `tests/`: pruebas unitarias con pytest.
 
