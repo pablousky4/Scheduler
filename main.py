@@ -6,8 +6,10 @@ os.makedirs(DATA_DIR, exist_ok=True)
 import sys
 from src.proceso import Proceso
 from src.repositorio import RepositorioProcesos
-from src.scheduler import FCFSScheduler, RoundRobinScheduler
 from src.metrics import calcular_metricas
+from src.fcfs_scheduler import FCFSScheduler
+from src.rr_scheduler  import RoundRobinScheduler
+
 
 def menu():
     repo = RepositorioProcesos()

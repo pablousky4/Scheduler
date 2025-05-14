@@ -2,6 +2,10 @@
 from typing import List, Tuple
 from .proceso import Proceso
 from .scheduler import GanttEntry
+from src.fcfs_scheduler import FCFSScheduler
+from src.scheduler import FCFSScheduler, RoundRobinScheduler
+from src.rr_scheduler  import RoundRobinScheduler
+
 
 def calcular_metricas(procesos: List[Proceso], gantt: List[GanttEntry]):
     # Asumimos tiempo_llegada == 0
