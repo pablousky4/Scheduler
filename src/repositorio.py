@@ -3,6 +3,7 @@ import json
 import csv
 from typing import List
 from .proceso import Proceso
+import os
 
 class RepositorioProcesos:
     def __init__(self):
@@ -24,20 +25,36 @@ class RepositorioProcesos:
     def obtener(self, pid: str) -> Proceso:
         return self._procesos[pid]
 
-    def guardar_json(self, ruta: str):
+    def guardar_json(self, nombre_archivo: str):
+        """
+        Guarda la lista de procesos en data/<nombre_archivo>.json
+        """
+        # Construir ruta dentro de data/
+        base = os.path.dirname(__file__)           # src/
+        ruta_data = os.path.abspath(os.path.join(base, '..', 'data'))
+        os.makedirs(ruta_data, exist_ok=True)
+        ruta = os.path.join(ruta_data, f"{nombre_archivo}.json")
+
         with open(ruta, 'w', encoding='utf-8') as f:
             json.dump([vars(p) for p in self.listar()], f, ensure_ascii=False, indent=2)
 
-    def cargar_json(self, ruta: str):
+    def cargar_json(self, nombre_archivo: str):
+        """
+        Carga procesos desde data/<nombre_archivo>.json (reemplaza lista actual)
+        """
+        base = os.path.dirname(__file__)
+        ruta = os.path.abspath(os.path.join(base, '..', 'data', f"{nombre_archivo}.json"))
+
         with open(ruta, encoding='utf-8') as f:
             datos = json.load(f)
+
         self._procesos.clear()
         for d in datos:
             p = Proceso(d['pid'], d['duracion'], d['prioridad'])
             p.tiempo_restante = d.get('tiempo_restante', p.duracion)
             p.tiempo_llegada = d.get('tiempo_llegada', 0)
-            p.tiempo_inicio = d.get('tiempo_inicio')
-            p.tiempo_fin = d.get('tiempo_fin')
+            p.tiempo_inicio  = d.get('tiempo_inicio')
+            p.tiempo_fin     = d.get('tiempo_fin')
             self._procesos[p.pid] = p
 
     def guardar_csv(self, ruta: str):

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # main.py
-
+import os
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+os.makedirs(DATA_DIR, exist_ok=True)
 import sys
 from src.proceso import Proceso
 from src.repositorio import RepositorioProcesos
