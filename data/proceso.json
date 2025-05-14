@@ -1,0 +1,11 @@
+[
+  {
+    "pid": "321",
+    "duracion": 5,
+    "prioridad": 1,
+    "tiempo_llegada": 0,
+    "tiempo_inicio": null,
+    "tiempo_fin": null,
+    "tiempo_restante": 5
+  }
+]
